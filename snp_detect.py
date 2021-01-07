@@ -84,7 +84,7 @@ def list_of_snps(argv1, argv2):
     original_without_snps = combine_found_snps(set(chunks_missing_in_first_dict.keys()))
 
     for original in original_without_snps:
-		for found in found_snps:
+	    for found in found_snps:
 	        if levenshtein_distance(original, found) < 10:
 	            print("The found snps are: ", end='')
 	            print(found)
