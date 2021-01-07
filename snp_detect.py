@@ -49,7 +49,6 @@ def combine_found_snps(arr):
             cur = from_[cur]
             part += cur[-1]
         res.append(part)
-    combine(set(chosen_chunks_1.keys()))
     return res
 
 
