@@ -3,21 +3,21 @@ import Bio.SeqIO
 from tqdm import tqdm
 
 
-def get_data(fasta_reads, k):
-    fasta_reads_dict = {}
-    l = len(str(fasta_reads[0].seq))
+def get_data(seq, k):
+    seq_dict = {}
+    l = len(str(seq[0].seq))
     #every sequence, count str with length k in them. Made a dict
-    for j in tqdm(range(len(fasta_reads))): 
+    for j in tqdm(range(len(seq))): 
         i = 0
-        seq_ = str(fasta_reads[j].seq)
+        seq_ = str(seq[j].seq)
         while i <= l-k :
             chunk = seq_[i:i+k]
-            if chunk in fasta_reads_dict.keys() :
-                fasta_reads_dict[chunk] += 1
+            if chunk in seq_dict.keys() :
+                seq_dict[chunk] += 1
             else: 
-                fasta_reads_dict[chunk] = 1
+                seq_dict[chunk] = 1
             i += 1
-    return fasta_reads_dict
+    return seq_dict
 
 def find_missing_keys_in_dict(from_dict, to_dict, file_name_1, file_name_2):
     print("Looking at sub-reads from {} file that miss in the {} file".format(file_name_1, file_name_2))
@@ -49,8 +49,30 @@ def combine_found_snps(arr):
             cur = from_[cur]
             part += cur[-1]
         res.append(part)
+    combine(set(chosen_chunks_1.keys()))
     return res
 
+def levenshtein_distance(a, b):
+    d = np.zeros((len(a), len(b)))
+
+    for i in range(len(a)):
+        d[i, 0] = i
+
+    for j in range(len(b)):
+        d[0, j] = j
+
+    for j in range(1, len(b)):
+        for i in range(1, len(a)):
+            if a[i] == b[j]:
+                cost = 0
+            else:
+                cost = 1
+
+            d[i, j] = min(d[i - 1, j] + 1, 
+                          d[i, j - 1] + 1, 
+                          d[i - 1, j - 1] + cost)
+
+    return int(d[-1][-1])
 
 def list_of_snps(argv1, argv2):
     dict_argv1 = get_data(argv1, 30)
@@ -62,10 +84,13 @@ def list_of_snps(argv1, argv2):
     found_snps = combine_found_snps(set(chunks_missing_in_second_dict.keys()))
     original_without_snps = combine_found_snps(set(chunks_missing_in_first_dict.keys()))
 
-    print("The found snps are:")
-    print(found_snps)
-    print("The orignial is:")
-    print(original_without_snps)
+	for original in original_without_snps:
+	    for found in found_snps:
+	        if levenshtein_distance(original, found) < 10:
+	            print("The found snps are: ", end='')
+	            print(found)
+	            print("The orignial is:    ", end='')
+	            print(original)
 
 
 if __name__ == "__main__":
