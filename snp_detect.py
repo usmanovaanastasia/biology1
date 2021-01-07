@@ -1,6 +1,9 @@
 import sys
 import Bio.SeqIO
 from tqdm import tqdm
+import numpy as np
+import os
+
 
 
 def get_data(fasta_reads, k):
@@ -93,7 +96,7 @@ def list_of_snps(argv1, argv2):
 
 
 if __name__ == "__main__":
-
+    os.system('clear')
     try:
         if (sys.argv[1] == sys.argv[2]):
             print("You have given the same file twice")
