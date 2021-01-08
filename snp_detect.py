@@ -91,7 +91,7 @@ def list_of_snps(argv1, argv2):
 	        if levenshtein_distance(original, found) < 10:
 	            print("The found snps are: ", end='')
 	            print(found)
-	            print("The orignial is:    ", end='')
+	            print("The original is:    ", end='')
 	            print(original)
 
 
